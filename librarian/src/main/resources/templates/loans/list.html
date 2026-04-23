@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Librarian - Controle de Empréstimos</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<main class="container">
+    <header class="app-header">
+        <div class="brand">
+            <div class="brand-mark">L</div>
+            <div>
+                <h1>Circulação de Livros</h1>
+                <p>Acompanhamento de prazos e registros de retorno.</p>
+            </div>
+        </div>
+        <div class="top-actions">
+            <a class="button-link secondary" th:href="@{/dashboard}">&larr; Dashboard</a>
+            <a class="button-link" th:href="@{/loans/new}">+ Registrar Saída</a>
+        </div>
+    </header>
+
+    <nav class="nav-links" aria-label="Navegação secundária">
+        <a class="button-link secondary" th:href="@{/users}">Usuários</a>
+        <a class="button-link secondary" th:href="@{/books}">Catálogo</a>
+        <a class="button-link secondary" th:href="@{/reservations}">Reservas</a>
+    </nav>
+
+    <section class="panel">
+        <div th:if="${success}" class="alert success" th:text="${success}"></div>
+        <div th:if="${error}" class="alert error" th:text="${error}"></div>
+
+        <div class="table-wrap" th:if="${!#lists.isEmpty(loans)}">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Livro</th>
+                        <th>Usuário</th>
+                        <th>Data Saída</th>
+                        <th>Prazo Final</th>
+                        <th>Status</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="loan : ${loans}">
+                        <td th:text="${loan.bookTitle}"></td>
+                        <td th:text="${loan.userName}"></td>
+                        <td th:text="${loan.loanDate}"></td>
+                        <td th:text="${loan.dueDate}"></td>
+                        <td>
+                            <span th:class="${loan.returned ? 'badge success' : 'badge warning'}"
+                                  th:text="${loan.returned ? 'Devolvido' : 'Em Aberto'}"></span>
+                        </td>
+                        <td>
+                            <form th:if="${!loan.returned}" th:action="@{'/loans/return/' + ${loan.id}}" method="post">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                <button type="submit" class="button-link secondary" style="padding: 4px 8px; font-size: 0.85rem;">Registrar Retorno</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <p class="empty" th:if="${#lists.isEmpty(loans)}">Nenhuma movimentação registrada no momento.</p>
+    </section>
+</main>
+</body>
+</html>

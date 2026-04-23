@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Librarian - Fila de Reservas</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<main class="container">
+    <header class="app-header">
+        <div class="brand">
+            <div class="brand-mark">L</div>
+            <div>
+                <h1>Reservas Ativas</h1>
+                <p>Monitoramento de interesse e disponibilidade futura.</p>
+            </div>
+        </div>
+        <div class="top-actions">
+            <a class="button-link secondary" th:href="@{/dashboard}">&larr; Dashboard</a>
+            <a class="button-link" th:href="@{/reservations/new}">+ Abrir Reserva</a>
+        </div>
+    </header>
+
+    <nav class="nav-links" aria-label="Módulos do sistema">
+        <a class="button-link secondary" th:href="@{/users}">Usuários</a>
+        <a class="button-link secondary" th:href="@{/books}">Catálogo</a>
+        <a class="button-link secondary" th:href="@{/loans}">Empréstimos</a>
+    </nav>
+
+    <section class="panel">
+        <div th:if="${success}" class="alert success" th:text="${success}"></div>
+        <div th:if="${error}" class="alert error" th:text="${error}"></div>
+
+        <div class="table-wrap" th:if="${!#lists.isEmpty(reservations)}">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Obra</th>
+                        <th>Interessado</th>
+                        <th>Data do Pedido</th>
+                        <th>Status da Fila</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="reservation : ${reservations}">
+                        <td th:text="${reservation.bookTitle}"></td>
+                        <td th:text="${reservation.userName}"></td>
+                        <td th:text="${reservation.reservationDate}"></td>
+                        <td>
+                            <span class="badge reservado" th:text="${reservation.status}"></span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <p class="empty" th:if="${#lists.isEmpty(reservations)}">Não há leitores aguardando livros no momento.</p>
+    </section>
+</main>
+</body>
+</html>

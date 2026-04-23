@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Librarian - Gestão de Usuários</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<main class="container">
+    <header class="app-header">
+        <div class="brand">
+            <div class="brand-mark">L</div>
+            <div>
+                <h1>Gestão de Usuários</h1>
+                <p>Controle de acessos e permissões do sistema (EAP 3.7).</p>
+            </div>
+        </div>
+        <a class="button-link secondary" th:href="@{/dashboard}">&larr; Voltar ao Dashboard</a>
+    </header>
+
+    <nav class="nav-links" aria-label="Navegação de módulos">
+        <a class="button-link secondary" th:href="@{/books}">Catálogo de Livros</a>
+        <a class="button-link secondary" th:href="@{/loans}">Empréstimos</a>
+        <a class="button-link secondary" th:href="@{/reservations}">Reservas</a>
+    </nav>
+
+    <section class="panel">
+        <div th:if="${success}" class="alert success" th:text="${success}"></div>
+        <div th:if="${error}" class="alert error" th:text="${error}"></div>
+
+        <div class="panel-title">
+            <div>
+                <h2>Novo Cadastro</h2>
+                <p>Defina o perfil de acesso para novos colaboradores ou leitores.</p>
+            </div>
+        </div>
+
+        <form th:action="@{/users}" method="post" class="form-grid">
+            <label>
+                Nome Completo
+                <input type="text" name="name" placeholder="Ex: João Silva" required>
+            </label>
+            <label>
+                E-mail Institucional
+                <input type="email" name="email" placeholder="usuario@biblioteca.com" required>
+            </label>
+            <label>
+                Senha Temporária
+                <input type="password" name="password" minlength="6" placeholder="Mín. 6 caracteres" required>
+            </label>
+            <label>
+                Perfil de Acesso (Role)
+                <select name="role" required>
+                    <option th:each="role : ${roles}" th:value="${role}" th:text="${role}"></option>
+                </select>
+            </label>
+            
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            
+            <div class="form-actions full">
+                <button type="submit" class="button-primary">Cadastrar Usuário</button>
+            </div>
+        </form>
+
+        <hr style="margin: 2rem 0; border: 0; border-top: 1px solid var(--line);">
+
+        <div class="panel-title">
+            <h2>Usuários Cadastrados</h2>
+        </div>
+
+        <div class="table-wrap" th:if="${!#lists.isEmpty(users)}">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>E-mail</th>
+                        <th>Perfil</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="user : ${users}">
+                        <td th:text="${user.name}"></td>
+                        <td th:text="${user.email}"></td>
+                        <td><span class="badge" th:text="${user.role}"></span></td>
+                        <td>
+                            <span th:class="${user.active} ? 'badge success' : 'badge warning'" 
+                                  th:text="${user.active ? 'Ativo' : 'Inativo'}"></span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <p class="empty" th:if="${#lists.isEmpty(users)}">Nenhum usuário encontrado na base de dados.</p>
+    </section>
+</main>
+</body>
+</html>
